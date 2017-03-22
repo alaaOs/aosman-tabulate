@@ -57,7 +57,7 @@ publication: the name of the publication you created earlier.
 columns: an array of objects holding the columns to be rendered in the table.
 extraFields: (optional) any extra fields for subscription,
 
-#Column structure
+# Column Structure
 data: field name in schema
 title: column title
 render: (optional) used this if you want to render processed data
