@@ -74,6 +74,8 @@ Template.tabulate.viewmodel({
     }
     if(this.sortField()){
       options["sort"] = {[this.sortField()]:this.sort()};
+    } else {
+      options["sort"] = {[this.options().defaultSort.field]:this.options().defaultSort.order};
     }
     if(this.options().extraFields){
       _.each(this.options().extraFields, function(field){
@@ -87,6 +89,7 @@ Template.tabulate.viewmodel({
       combinedQuery = {$and:[tableQuery,this.query()]};
     }
     this.templateInstance.subscribe(this.options().publication, combinedQuery, this.subOpts())
+    this.templateInstance.subscribe(this.options().publication+"Count", combinedQuery)
     this.getTotalCount();
     if(this.skip()>0){
       $(".previous-page").removeClass("disabled")
@@ -112,23 +115,14 @@ Template.tabulate.viewmodel({
     delete options['skip'];
     delete options['sort'];
 
-    combinedQuery = this.tableQuery();
-    if (this.query()) {
-      combinedQuery = {$and:[this.tableQuery(),this.query()]};
-    }
-      Meteor.call(this.options().collection+"Count", combinedQuery,this.subOpts(), function(error, result){
-        if(error){
-          console.log("error", error);
-        }
-        if(result){
-          nEntries = result;
-          _this.nEntries(nEntries);
-          perPage = parseInt(_this.limit());
-          _this.nPages(Math.ceil(nEntries/perPage));
-          if(_this.skip()>result)
-          _this.skip(0);
-        }
-      });
+    nEntries = Counts.get(this.options().collection);
+    // eval(this.options().collection).find({}).fetch().length;
+    _this.nEntries(nEntries);
+    perPage = parseInt(_this.limit());
+    _this.nPages(Math.ceil(nEntries/perPage));
+    if(_this.skip()>nEntries)
+    _this.skip(0);
+
   },
   changePage: function(){
     if (this.page()) {
@@ -139,7 +133,8 @@ Template.tabulate.viewmodel({
     return Math.ceil(this.skip()/this.limit())+1;
   },
   entries: function(){
-    return eval(this.options().collection).find({},{limit: parseInt(this.limit())}).fetch();
+    options = jQuery.extend(true, [], this.subOpts());
+    return eval(this.options().collection).find({},{limit: parseInt(this.limit()), sort: options.sort}).fetch();
   },
   formatDate: function(d){
     return moment(d).format("MM/DD/YYYY");
