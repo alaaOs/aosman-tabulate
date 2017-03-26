@@ -211,8 +211,10 @@ Template.tabulate.viewmodel({
 
       if(this.sortField()===e.target.getAttribute("data-field")){
         this.sort(-1*this.sort());
-        if(this.sort()==-1)
-          $("th[data-field='"+e.target.getAttribute("data-field")+"'] .arrow").html("arrow_drop_down")
+        if(this.sort()==-1){
+          $(".arrow").hide();
+          this.sortField("");
+        }
         else
           $("th[data-field='"+e.target.getAttribute("data-field")+"'] .arrow").html("arrow_drop_up")
       } else {
