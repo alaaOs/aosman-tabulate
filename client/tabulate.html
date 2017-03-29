@@ -15,42 +15,46 @@
   </div>
 <div class="row">
   <div class="col l12">
-    <table class="table bordered highlight striped">
-        <thead>
-          <tr>
-            {{#each field in retTableFields}}
-              <th data-field={{field.data}} class="sort-col"><a data-field={{field.data}} href="">{{field.name}}</a><i data-field="{{field.data}}" class="arrow material-icons">arrow_drop_down</i></th>
-            {{/each}}
-          </tr>
-        </thead>
-
-        <tbody>
-          {{#each entry in entries}}
+    {{#if Template.subscriptionsReady}}
+      <table class="table bordered highlight striped">
+          <thead>
             <tr>
-              {{#each col in retTableFields}}
-                {{#if col.tmpl}}
-                  {{#with col}}
-                    <td id="{{returnId entry name}}"></td>
-                    {{renderTmpl tmpl entry name}}
-                  {{/with}}
-                {{else}}
-                  {{#if col.render}}
-                    {{#with col}}
-                      <td>{{render entry data}}</td>
-                    {{/with}}
-                  {{else}}
-                    <td>{{renderCell entry col.data}}</td>
-                  {{/if}}
-                {{/if}}
+              {{#each field in retTableFields}}
+                <th data-field={{field.data}} class="sort-col"><a data-field={{field.data}} href="">{{field.name}}</a><i data-field="{{field.data}}" class="arrow material-icons">arrow_drop_down</i></th>
               {{/each}}
             </tr>
-          {{else}}
-          <tr>
-            <td colspan="10">No results to show</td>
-          </tr>
-          {{/each}}
-        </tbody>
-    </table>
+          </thead>
+
+          <tbody>
+            {{#each entry in entries}}
+              <tr>
+                {{#each col in retTableFields}}
+                  {{#if col.tmpl}}
+                    {{#with col}}
+                      <td id="{{returnId entry name}}"></td>
+                      {{renderTmpl tmpl entry name}}
+                    {{/with}}
+                  {{else}}
+                    {{#if col.render}}
+                      {{#with col}}
+                        <td>{{render entry data}}</td>
+                      {{/with}}
+                    {{else}}
+                      <td>{{renderCell entry col.data}}</td>
+                    {{/if}}
+                  {{/if}}
+                {{/each}}
+              </tr>
+            {{else}}
+            <tr>
+              <td colspan="10">No results to show</td>
+            </tr>
+            {{/each}}
+          </tbody>
+      </table>
+    {{else}}
+      {{> loadingData}}
+    {{/if}}
     <div class="col l4">Showing {{skip}} to {{lastIndex}} of {{nEntries}}</div>
     <ul class="pagination right" style="margin:0">
       <li class="waves-effect first-page disabled"><a>&lt;&lt;</a></li>

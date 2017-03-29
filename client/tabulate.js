@@ -13,6 +13,9 @@ Template.tabulate.viewmodel({
   tableFields: [],
   subOpts: {},
   tableQuery: {},
+  search: function(){
+    this.page(1);
+  },
   renderCell: function(entry, col){
     return entry[col];
   },
@@ -107,6 +110,12 @@ Template.tabulate.viewmodel({
       $(".next-page").addClass("disabled");
       $(".last-page").addClass("disabled");
     }
+    console.log(this.nPages());
+    if (this.nPages() == 0) {
+      this.page(0)
+    }
+    else
+      this.page(Math.ceil(this.skip()/this.limit())+1);
   },
   getTotalCount: function(){
     _this=this;
@@ -128,9 +137,6 @@ Template.tabulate.viewmodel({
     if (this.page()) {
       this.skip((this.page()-1)*parseInt(this.limit()))
     }
-  },
-  currentPage: function(){
-    return Math.ceil(this.skip()/this.limit())+1;
   },
   entries: function(){
     options = jQuery.extend(true, [], this.subOpts());

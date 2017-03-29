@@ -9,7 +9,7 @@ meteor add aosman:tabulate
 
 ## Usage
 Create two publication in your server as follows,
-Publish collection count using ```js tmeasday:publish-counts ```  
+Publish collection count using ``` tmeasday:publish-counts ```  
 ```js
 if(Meteor.isServer){
     Meteor.publish("pubName", function(query,options){
