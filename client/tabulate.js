@@ -4,6 +4,7 @@ Template.tabulate.viewmodel({
   nPages: 0,
   nEntries: 0,
   skip: 0,
+  scroll: 0 ,
   page: 1,
   searchQuery: "",
   limit: 10,
@@ -13,8 +14,12 @@ Template.tabulate.viewmodel({
   tableFields: [],
   subOpts: {},
   tableQuery: {},
-  search: function(){
-    this.page(1);
+  pagingType: "pages",
+  getPagingType: function(paging){
+    if(this.pagingType() == paging){
+      return true;
+    }
+    return false;
   },
   renderCell: function(entry, col){
     return entry[col];
@@ -34,6 +39,23 @@ Template.tabulate.viewmodel({
     }, 100);
   },
   onRendered: function(){
+    var _this = this;
+    $('#tabulate-body-wrap').scroll(function(){
+      if (_this.templateInstance.subscriptionsReady()) {
+        if ($('#tabulate-body').height()- 400 == $(this).scrollTop()) {
+          _this.scroll(_this.scroll()+_this.limit());
+          _this.skip(_this.scroll());
+            $(this).scrollTop(10)
+        }
+        if ($(this).scrollTop() == 0 && _this.skip() >0) {
+          if (_this.skip() && _this.scroll()) {
+            _this.scroll(_this.scroll()-_this.limit());
+            _this.skip(_this.scroll());
+              $(this).scrollTop(10)
+          }
+        }
+      }
+    });
     $('select').material_select();
     searchable = [];
     fields = {};
@@ -110,12 +132,6 @@ Template.tabulate.viewmodel({
       $(".next-page").addClass("disabled");
       $(".last-page").addClass("disabled");
     }
-    console.log(this.nPages());
-    if (this.nPages() == 0) {
-      this.page(0)
-    }
-    else
-      this.page(Math.ceil(this.skip()/this.limit())+1);
   },
   getTotalCount: function(){
     _this=this;
@@ -137,6 +153,9 @@ Template.tabulate.viewmodel({
     if (this.page()) {
       this.skip((this.page()-1)*parseInt(this.limit()))
     }
+  },
+  currentPage: function(){
+    return Math.ceil(this.skip()/this.limit())+1;
   },
   entries: function(){
     options = jQuery.extend(true, [], this.subOpts());
