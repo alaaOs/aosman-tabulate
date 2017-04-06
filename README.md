@@ -64,3 +64,6 @@ title: column title.
 render: (optional) used this if you want to render processed data.
 tmpl: (optional) create a custom template you want to render in the cell and assign it's name here.
 searchable: (optional) deafault is false.
+
+## To do
+fix header in infinite scroll
