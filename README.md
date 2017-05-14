@@ -71,5 +71,5 @@ searchable: (optional) deafault is false.
 
 ### Paging Type
 (optional) default is normal paging.
-Set pagingType = "scroll" for scroll paging.
-Set limit to the number of entries per page
+Set pagingType = "scroll" for scroll paging, Set increment (optional) to the number of entries per page.
+Set pagingType = "infiniteScroll" for infinite scrolling, Set increment (optional) to the number of extra loaded entries

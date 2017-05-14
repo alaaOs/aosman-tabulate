@@ -72,7 +72,36 @@
             </div>
             <div  id="tabulate-body-wrap">
                 <tbody  id="tabulate-body">
-                  {{#if Template.subscriptionsReady}}
+                  {{#if getPagingType "scroll"}}
+                    {{#if Template.subscriptionsReady}}
+                      {{#each entry in entries}}
+                        <tr>
+                          {{#each col in retTableFields}}
+                            {{#if col.tmpl}}
+                              {{#with col}}
+                                <td id="{{returnId entry name}}"></td>
+                                {{renderTmpl tmpl entry name}}
+                              {{/with}}
+                            {{else}}
+                              {{#if col.render}}
+                                {{#with col}}
+                                  <td>{{render entry data}}</td>
+                                {{/with}}
+                              {{else}}
+                                <td>{{renderCell entry col.data}}</td>
+                              {{/if}}
+                            {{/if}}
+                          {{/each}}
+                        </tr>
+                      {{else}}
+                        <tr>
+                          <td colspan="10">No results to show</td>
+                        </tr>
+                      {{/each}}
+                    {{else}}
+                      {{> loadingData}}
+                    {{/if}}
+                  {{else}}
                     {{#each entry in entries}}
                       <tr>
                         {{#each col in retTableFields}}
@@ -97,8 +126,6 @@
                         <td colspan="10">No results to show</td>
                       </tr>
                     {{/each}}
-                  {{else}}
-                    {{> loadingData}}
                   {{/if}}
                 </tbody>
           </div>

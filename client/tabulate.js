@@ -8,6 +8,7 @@ Template.tabulate.viewmodel({
   page: 1,
   searchQuery: "",
   limit: 10,
+  increment: 10,
   query: {},
   searchableColumns: [],
   fields: {},
@@ -40,22 +41,33 @@ Template.tabulate.viewmodel({
   },
   onRendered: function(){
     var _this = this;
-    $('#tabulate-body-wrap').scroll(function(){
-      if (_this.templateInstance.subscriptionsReady()) {
-        if ($('#tabulate-body').height()- 400 == $(this).scrollTop()) {
-          _this.scroll(_this.scroll()+_this.limit());
-          _this.skip(_this.scroll());
-            $(this).scrollTop(10)
-        }
-        if ($(this).scrollTop() == 0 && _this.skip() >0) {
-          if (_this.skip() && _this.scroll()) {
-            _this.scroll(_this.scroll()-_this.limit());
-            _this.skip(_this.scroll());
-              $(this).scrollTop(10)
+    if(this.pagingType() === "infiniteScroll"){
+      $('#tabulate-body-wrap').scroll(function(){
+        if (_this.templateInstance.subscriptionsReady()) {
+          if ($('#tabulate-body').height()- 400 == $(this).scrollTop()) {
+            // _this.scroll(_this.scroll()+_this.limit());
+            _this.limit(_this.limit()+_this.increment());
           }
         }
-      }
-    });
+      });
+    } else if(this.pagingType() === "scroll"){
+      $('#tabulate-body-wrap').scroll(function(){
+        if (_this.templateInstance.subscriptionsReady()) {
+          if ($('#tabulate-body').height()- 400 == $(this).scrollTop()) {
+            _this.scroll(_this.scroll()+_this.limit());
+            _this.skip(_this.scroll());
+            $(this).scrollTop(10)
+          }
+          if ($(this).scrollTop() == 0 && _this.skip() >0) {
+            if (_this.skip() && _this.scroll()) {
+              _this.scroll(_this.scroll()-_this.limit());
+              _this.skip(_this.scroll());
+              $(this).scrollTop(10)
+            }
+          }
+        }
+      });
+    }
     $('select').material_select();
     searchable = [];
     fields = {};
