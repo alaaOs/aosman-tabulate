@@ -25,8 +25,9 @@ Note: CollectionName is case sensitive, pubName should be the same in both publi
 add tabulate template to your html file as follows
 
 ```js
-{{> tabulate options=options query=query}}
+{{> tabulate options=options query=query  pagingType="infinite" limit=10}}
 ```
+### Options object
 Create options object in your js file as follows
 ```js
 Options = {
@@ -58,12 +59,20 @@ columns: an array of objects holding the columns to be rendered in the table.
 defaultSort: (optional) field name by which you want table data to be sorted initially (1 for asc. and -1 for desc.).
 extraFields: (optional) any extra fields for subscription.
 
-#Column structure
+### Column structure
 data: field name in schema.
 title: column title.
 render: (optional) used this if you want to render processed data.
 tmpl: (optional) create a custom template you want to render in the cell and assign it's name here.
 searchable: (optional) deafault is false.
+
+### Custom Query
+(optional) query should be set to any custom mongoDB query you want
+
+### Paging Type
+(optional) default is normal paging.
+Set pagingType = "scroll" for scroll paging, Set increment (optional) to the number of entries per page.
+Set pagingType = "infiniteScroll" for infinite scrolling, Set increment (optional) to the number of extra loaded entries
 
 ## To do
 fix header in infinite scroll

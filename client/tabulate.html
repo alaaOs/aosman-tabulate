@@ -1,5 +1,5 @@
 <template name="tabulate">
-  <div class="row" style="margin: 0 0 -2rem 0;">
+  {{#if getPagingType "pages"}}
     <div class="input-field col l3" style="padding:0">
       <label class="active">Number of entries</label>
       <select  {{b "value: limit, change: changeLimit"}} >
@@ -12,11 +12,16 @@
     <div class="input-field col l3 offset-l6" style="padding:0">
       <input {{b "value: searchQuery, change: search"}} placeholder="search" id="first_name" type="text">
     </div>
-  </div>
-<div class="row">
-  <div class="col l12">
-    {{#if Template.subscriptionsReady}}
+  {{else}}
+    <div class="input-field col l3" style="padding:0; padding-left:1rem">
+      <input {{b "value: searchQuery, change: search"}} placeholder="search" id="first_name" type="text">
+    </div>
+  {{/if}}
+  <div class="row">
+    <div class="col l12">
       <table class="table bordered highlight striped">
+
+        {{#if getPagingType "pages"}}
           <thead>
             <tr>
               {{#each field in retTableFields}}
@@ -25,52 +30,141 @@
             </tr>
           </thead>
 
-          <tbody>
-            {{#each entry in entries}}
-              <tr>
-                {{#each col in retTableFields}}
-                  {{#if col.tmpl}}
-                    {{#with col}}
-                      <td id="{{returnId entry name}}"></td>
-                      {{renderTmpl tmpl entry name}}
-                    {{/with}}
+            {{#if Template.subscriptionsReady}}
+              <tbody>
+                  {{#each entry in entries}}
+                    <tr>
+                      {{#each col in retTableFields}}
+                        {{#if col.tmpl}}
+                          {{#with col}}
+                            <td id="{{returnId entry name}}"></td>
+                            {{renderTmpl tmpl entry name}}
+                          {{/with}}
+                        {{else}}
+                          {{#if col.render}}
+                            {{#with col}}
+                              <td>{{render entry data}}</td>
+                            {{/with}}
+                          {{else}}
+                            <td>{{renderCell entry col.data}}</td>
+                          {{/if}}
+                        {{/if}}
+                      {{/each}}
+                    </tr>
                   {{else}}
-                    {{#if col.render}}
-                      {{#with col}}
-                        <td>{{render entry data}}</td>
-                      {{/with}}
-                    {{else}}
-                      <td>{{renderCell entry col.data}}</td>
-                    {{/if}}
-                  {{/if}}
-                {{/each}}
-              </tr>
+                    <tr>
+                      <td colspan="10">No results to show</td>
+                    </tr>
+                  {{/each}}
+              </tbody>
             {{else}}
-            <tr>
-              <td colspan="10">No results to show</td>
-            </tr>
-            {{/each}}
-          </tbody>
-      </table>
-    {{else}}
-      {{> loadingData}}
-    {{/if}}
-    <div class="col l4">Showing {{skip}} to {{lastIndex}} of {{nEntries}}</div>
-    <ul class="pagination right" style="margin:0">
-      <li class="waves-effect first-page disabled"><a>&lt;&lt;</a></li>
-      <li class="disabled previous-page"><a><i class="material-icons">chevron_left</i></a></li>
-        <li class="">
-          <div class="input-field"  style="margin: 0;padding: 0;float:left">
-            <input {{b "value: page, change: changePage"}} type="number" min=1 max={{nPages}} style="height:2rem" onkeypress="return event.charCode >= 48">
+              {{> loadingData}}
+            {{/if}}
+          {{else}}
+            <div>
+              <thead id="tabulate-header">
+                <tr>
+                  {{#each field in retTableFields}}
+                    <th data-field={{field.data}} class="sort-col"><a data-field={{field.data}} href="">{{field.name}}</a><i data-field="{{field.data}}" class="arrow material-icons">arrow_drop_down</i></th>
+                  {{/each}}
+                </tr>
+              </thead>
+            </div>
+            <div  id="tabulate-body-wrap">
+                <tbody  id="tabulate-body">
+                  {{#if getPagingType "scroll"}}
+                    {{#if Template.subscriptionsReady}}
+                      {{#each entry in entries}}
+                        <tr>
+                          {{#each col in retTableFields}}
+                            {{#if col.tmpl}}
+                              {{#with col}}
+                                <td id="{{returnId entry name}}"></td>
+                                {{renderTmpl tmpl entry name}}
+                              {{/with}}
+                            {{else}}
+                              {{#if col.render}}
+                                {{#with col}}
+                                  <td>{{render entry data}}</td>
+                                {{/with}}
+                              {{else}}
+                                <td>{{renderCell entry col.data}}</td>
+                              {{/if}}
+                            {{/if}}
+                          {{/each}}
+                        </tr>
+                      {{else}}
+                        <tr>
+                          <td colspan="10">No results to show</td>
+                        </tr>
+                      {{/each}}
+                    {{else}}
+                      {{> loadingData}}
+                    {{/if}}
+                  {{else}}
+                    {{#each entry in entries}}
+                      <tr>
+                        {{#each col in retTableFields}}
+                          {{#if col.tmpl}}
+                            {{#with col}}
+                              <td id="{{returnId entry name}}"></td>
+                              {{renderTmpl tmpl entry name}}
+                            {{/with}}
+                          {{else}}
+                            {{#if col.render}}
+                              {{#with col}}
+                                <td>{{render entry data}}</td>
+                              {{/with}}
+                            {{else}}
+                              <td>{{renderCell entry col.data}}</td>
+                            {{/if}}
+                          {{/if}}
+                        {{/each}}
+                      </tr>
+                    {{else}}
+                      <tr>
+                        <td colspan="10">No results to show</td>
+                      </tr>
+                    {{/each}}
+                  {{/if}}
+                </tbody>
           </div>
-          <p style="position:relative;top: 0.5rem;float: left;padding: 0;margin: 0 0 0 1rem;font-size: small;">of {{nPages}}</p>
-        </li>
-        <li class="waves-effect next-page"><a><i class="material-icons">chevron_right</i></a></li>
-      <li class="waves-effect last-page"><a>&gt;&gt;</a></li>
-    </ul>
+          {{/if}}
+      </table>
+      <div class="col l4">Showing {{skip}} to {{lastIndex}} of {{nEntries}}</div>
+      {{#if getPagingType "pages"}}
+        <ul class="pagination right" style="margin:0">
+          <li class="waves-effect first-page disabled"><a>&lt;&lt;</a></li>
+          <li class="disabled previous-page"><a><i class="material-icons">chevron_left</i></a></li>
+            <li class="">
+              <div class="input-field"  style="margin: 0;padding: 0;float:left">
+                <input {{b "value: page, change: changePage"}} type="number" min=1 max={{nPages}} style="height:2rem" onkeypress="return event.charCode >= 48">
+              </div>
+              <p style="position:relative;top: 0.5rem;float: left;padding: 0;margin: 0 0 0 1rem;font-size: small;">of {{nPages}}</p>
+            </li>
+            <li class="waves-effect next-page"><a><i class="material-icons">chevron_right</i></a></li>
+          <li class="waves-effect last-page"><a>&gt;&gt;</a></li>
+        </ul>
+      {{/if}}
+    </div>
   </div>
-</div>
   <style>
+    .loading-content{
+          text-align: center;
+    }
+    #tabulate-header{
+        width: 100%;
+        display: inline-table;
+    }
+    #tabulate-body-wrap{
+      width: 100%;
+      overflow-y: scroll;
+      height: 400px;
+    }
+    #tabulate-body{
+      display: table;
+      width: 100%;
+    }
     th a{
       color:rgba(0, 0, 0, 0.87) !important
     }

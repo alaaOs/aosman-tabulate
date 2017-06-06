@@ -1,6 +1,6 @@
 Package.describe({
   name: 'aosman:tabulate',
-  version: '0.0.4',
+  version: '0.0.7',
   // Brief, one-line summary of the package.
   summary: 'Meteor Package that creates a reactive table from any given mongo collection',
   // URL to the Git repository containing the source code for this package.
