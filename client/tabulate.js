@@ -170,8 +170,12 @@ Template.tabulate.viewmodel({
     return Math.ceil(this.skip()/this.limit())+1;
   },
   entries: function(){
-    options = jQuery.extend(true, [], this.subOpts());
-    return eval(this.options().collection).find({},{limit: parseInt(this.limit()), sort: options.sort}).fetch();
+    if (this.subOpts) {
+      options = jQuery.extend(true, [], this.subOpts());
+      if (this.options().collection) {
+        return eval(this.options().collection).find({},{sort: options.sort, skip: options.skip, limit: parseInt(this.limit())}).fetch();
+      }
+    }
   },
   formatDate: function(d){
     return moment(d).format("MM/DD/YYYY");
