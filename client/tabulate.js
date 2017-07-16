@@ -40,13 +40,11 @@ Template.tabulate.viewmodel({
     }, 100);
   },
   onRendered: function(){
-    console.log("hello");
     var _this = this;
     if(this.pagingType() === "infiniteScroll"){
       $('#tabulate-body-wrap').scroll(function(){
         if (_this.templateInstance.subscriptionsReady()) {
           if ($('#tabulate-body').height()- 400 == $(this).scrollTop()) {
-            // _this.scroll(_this.scroll()+_this.limit());
             _this.limit(_this.limit()+_this.increment());
           }
         }
@@ -125,7 +123,7 @@ Template.tabulate.viewmodel({
     combinedQuery = tableQuery;
     if (this.query()) {
       combinedQuery = {$and:[tableQuery,this.query()]};
-      console.log(this.query());
+      // console.log(this.query());
     }
     this.templateInstance.subscribe(this.options().publication, combinedQuery, this.subOpts())
     this.templateInstance.subscribe(this.options().publication+"Count", combinedQuery)
@@ -175,7 +173,7 @@ Template.tabulate.viewmodel({
     if (this.subOpts) {
       options = jQuery.extend(true, [], this.subOpts());
       if (this.options().collection) {
-        return eval(this.options().collection).find({$and:[this.tableQuery(),this.query()]},{sort: options.sort, skip: options.skip, limit: parseInt(this.limit())}).fetch();
+        return eval(this.options().collection).find().fetch();
       }
     }
   },
