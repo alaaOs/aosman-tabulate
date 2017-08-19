@@ -171,9 +171,12 @@ Template.tabulate.viewmodel({
   },
   entries: function(){
     if (this.subOpts) {
-      options = jQuery.extend(true, [], this.subOpts());
+      options = jQuery.extend(true, {}, this.subOpts());
       if (this.options().collection) {
-        return eval(this.options().collection).find().fetch();
+        if (options) {
+          return eval(this.options().collection).find({},{sort:options.sort}).fetch();
+        }
+        return eval(this.options().collection).find({}).fetch();
       }
     }
   },
