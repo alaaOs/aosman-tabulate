@@ -1,8 +1,8 @@
 <template name="tabulate">
   {{#if getPagingType "pages"}}
-    <div class="input-field col l3" style="padding:0">
+    <div class="input-field col l3" id="limit-field" style="padding:0">
       <label class="active">Number of entries</label>
-      <select  {{b "value: limit, change: changeLimit"}} >
+      <select {{b "value: limit, change: changeLimit"}} >
         <option value=10>10</option>
         <option value=15>15</option>
         <option value=25>25</option>
@@ -10,11 +10,11 @@
       </select>
     </div>
     <div class="input-field col l3 offset-l6" style="padding:0">
-      <input {{b "value: searchQuery, change: search"}} placeholder="search" id="first_name" type="text">
+      <input {{b "value: searchQuery, change: changeTableQuery"}} placeholder="search" type="text">
     </div>
   {{else}}
     <div class="input-field col l3" style="padding:0; padding-left:1rem">
-      <input {{b "value: searchQuery, change: search"}} placeholder="search" id="first_name" type="text">
+      <input {{b "value: searchQuery, change: changeTableQuery"}} placeholder="search" type="text">
     </div>
   {{/if}}
   <div class="row">
@@ -53,12 +53,18 @@
                     </tr>
                   {{else}}
                     <tr>
-                      <td colspan="10">No results to show</td>
+                      <td colspan="100" style="text-align: center;">No results to show</td>
                     </tr>
                   {{/each}}
               </tbody>
             {{else}}
-              {{> loadingData}}
+              <tbody>
+                <tr>
+                  <td colspan="100" style="text-align: center;">
+                    {{> loadingData}}
+                  </td>
+                </tr>
+              </tbody>
             {{/if}}
           {{else}}
             <div>
@@ -95,11 +101,17 @@
                         </tr>
                       {{else}}
                         <tr>
-                          <td colspan="10">No results to show</td>
+                          <td colspan="100">No results to show</td>
                         </tr>
                       {{/each}}
                     {{else}}
-                      {{> loadingData}}
+                      <tbody>
+                        <tr>
+                          <td colspan="100" style="text-align: center;">
+                            {{> loadingData}}
+                          </td>
+                        </tr>
+                      </tbody>
                     {{/if}}
                   {{else}}
                     {{#each entry in entries}}
@@ -123,7 +135,7 @@
                       </tr>
                     {{else}}
                       <tr>
-                        <td colspan="10">No results to show</td>
+                        <td colspan="100">No results to show</td>
                       </tr>
                     {{/each}}
                   {{/if}}
@@ -140,7 +152,11 @@
               <div class="input-field"  style="margin: 0;padding: 0;float:left">
                 <input {{b "value: page, change: changePage"}} type="number" min=1 max={{nPages}} style="height:2rem" onkeypress="return event.charCode >= 48">
               </div>
-              <p style="position:relative;top: 0.5rem;float: left;padding: 0;margin: 0 0 0 1rem;font-size: small;">of {{nPages}}</p>
+              {{#if nPages}}
+                <p style="position:relative;top: 0.5rem;float: left;padding: 0;margin: 0 0 0 1rem;font-size: small;">of {{nPages}}</p>
+              {{else}}
+                <p style="position:relative;top: 0.5rem;float: left;padding: 0;margin: 0 0 0 1rem;font-size: small;">of 1</p>
+              {{/if}}
             </li>
             <li class="waves-effect next-page"><a><i class="material-icons">chevron_right</i></a></li>
           <li class="waves-effect last-page"><a>&gt;&gt;</a></li>

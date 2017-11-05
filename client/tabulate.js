@@ -16,6 +16,7 @@ Template.tabulate.viewmodel({
   subOpts: {},
   tableQuery: {},
   pagingType: "pages",
+  changedPage: false,
   getPagingType: function(paging){
     if(this.pagingType() == paging){
       return true;
@@ -91,7 +92,10 @@ Template.tabulate.viewmodel({
     })
     return fields;
   },
-  autorun: function(){
+  autorun: [function(){
+    // console.log("value",);
+    temp = this
+    this.limit($("#limit-field input.select-dropdown").val());
     fields = {};
     searchable = [];
     regexQuery = {
@@ -125,8 +129,8 @@ Template.tabulate.viewmodel({
       combinedQuery = {$and:[tableQuery,this.query()]};
       // console.log(this.query());
     }
-    this.templateInstance.subscribe(this.options().publication, combinedQuery, this.subOpts())
-    this.templateInstance.subscribe(this.options().publication+"Count", combinedQuery)
+    temp.templateInstance.subscribe(this.options().publication, combinedQuery, this.subOpts())
+    temp.templateInstance.subscribe(this.options().publication+"Count", combinedQuery)
     this.getTotalCount();
     if(this.skip()>0){
       $(".previous-page").removeClass("disabled")
@@ -144,6 +148,16 @@ Template.tabulate.viewmodel({
       $(".next-page").addClass("disabled");
       $(".last-page").addClass("disabled");
     }
+  },
+  function() {
+    // console.log("query autorun");
+    this.query();
+    this.page(1);
+    this.skip(0);
+  }],
+  changeTableQuery: function(){
+    this.page(1);
+    this.skip(0);
   },
   getTotalCount: function(){
     _this=this;
@@ -163,6 +177,7 @@ Template.tabulate.viewmodel({
   },
   changePage: function(){
     if (this.page()) {
+      this.changedPage(true);
       this.skip((this.page()-1)*parseInt(this.limit()))
     }
   },
@@ -211,6 +226,7 @@ Template.tabulate.viewmodel({
   },
   events:{
     "click .next-page"(e){
+      this.changedPage(true);
       if(this.skip()>0){
         $(".previous-page").removeClass("disabled")
       }
@@ -223,6 +239,7 @@ Template.tabulate.viewmodel({
       this.page(Math.ceil(this.skip()/this.limit())+1);
     },
     "click .previous-page"(e){
+      this.changedPage(true);
       if(this.skip()>0)
         this.skip(this.skip()-this.limit())
       if(this.skip()==0){
@@ -234,6 +251,7 @@ Template.tabulate.viewmodel({
       this.page(Math.ceil(this.skip()/this.limit())+1);
     },
     "click .first-page"(e){
+      this.changedPage(true);
       $(".first-page").addClass("disabled");
       $(".previous-page").addClass("disabled");
       $(".last-page").removeClass("disabled");
@@ -242,6 +260,7 @@ Template.tabulate.viewmodel({
       this.page(1)
     },
     "click .last-page"(e){
+      this.changedPage(true);
       $(".last-page").addClass("disabled");
       $(".next-page").addClass("disabled");
       $(".first-page").removeClass("disabled");
